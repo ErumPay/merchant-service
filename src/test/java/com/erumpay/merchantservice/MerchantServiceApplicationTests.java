@@ -9,5 +9,4 @@ class MerchantServiceApplicationTests {
     @Test
     void contextLoads() {
     }
-
 }
