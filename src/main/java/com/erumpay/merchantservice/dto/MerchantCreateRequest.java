@@ -1,23 +1,49 @@
 package com.erumpay.merchantservice.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
+
+import java.math.BigDecimal;
 
 public record MerchantCreateRequest(
         @NotBlank
         @Size(max = 100)
-        String name,
+        String merchantName,
 
         @NotBlank
-        @Size(max = 30)
+        @Size(max = 20)
         String businessNumber,
 
         @NotBlank
-        @Size(max = 100)
+        @Size(max = 50)
         String ownerName,
 
         @NotBlank
         @Size(max = 20)
-        String phoneNumber
+        String contactPhone,
+
+        @NotBlank
+        @Size(max = 255)
+        String businessAddress,
+
+        @NotBlank
+        @Size(max = 50)
+        String categoryName,
+
+        @NotBlank
+        @Size(min = 4, max = 4)
+        String mccCode,
+
+        @NotBlank
+        @Size(max = 255)
+        String apiKey,
+
+        @NotNull
+        @DecimalMin("0.00")
+        @Digits(integer = 3, fraction = 2)
+        BigDecimal feeRate,
+
+        @NotBlank
+        @Size(max = 100)
+        String settlementAccount
 ) {
 }
