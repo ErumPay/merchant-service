@@ -2,6 +2,7 @@ package com.erumpay.merchantservice.global.exception;
 
 import java.time.LocalDateTime;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -21,7 +22,8 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse(
                         HttpStatus.CONFLICT.name(),
                         e.getMessage(),
-                        LocalDateTime.now()
+                        LocalDateTime.now(),
+                        MDC.get("traceId")
                 ));
     }
 
@@ -29,13 +31,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleMerchantNotFoundException(
             MerchantNotFoundException e) {
 
-        log.info("가맹점 조회 실패", e);
+        log.debug("가맹점 조회 실패", e);
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ErrorResponse(
                         HttpStatus.NOT_FOUND.name(),
                         e.getMessage(),
-                        LocalDateTime.now()
+                        LocalDateTime.now(),
+                        MDC.get("traceId")
                 ));
     }
 
@@ -48,7 +51,8 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse(
                         HttpStatus.INTERNAL_SERVER_ERROR.name(),
                         "서버 내부 오류가 발생했습니다.",
-                        LocalDateTime.now()
+                        LocalDateTime.now(),
+                        MDC.get("traceId")
                 ));
     }
 }

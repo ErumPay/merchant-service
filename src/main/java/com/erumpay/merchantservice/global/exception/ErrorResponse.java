@@ -7,11 +7,13 @@ public class ErrorResponse {
     private final String code;
     private final String message;
     private final LocalDateTime timestamp;
+    private final String traceId;
 
-    public ErrorResponse(String code, String message, LocalDateTime timestamp) {
+    public ErrorResponse(String code, String message, LocalDateTime timestamp, String traceId) {
         this.code = code;
         this.message = message;
         this.timestamp = timestamp;
+        this.traceId = traceId;
     }
 
     public String getCode() {
@@ -24,5 +26,9 @@ public class ErrorResponse {
 
     public LocalDateTime getTimestamp() {
         return timestamp;
+    }
+
+    public String getTraceId() {
+        return traceId;
     }
 }
