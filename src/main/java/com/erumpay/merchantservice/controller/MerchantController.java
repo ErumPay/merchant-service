@@ -4,7 +4,6 @@ import com.erumpay.merchantservice.dto.MerchantCreateRequest;
 import com.erumpay.merchantservice.dto.MerchantResponse;
 import com.erumpay.merchantservice.service.MerchantService;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,13 +29,13 @@ public class MerchantController {
         return merchantService.createMerchant(request);
     }
 
-    @GetMapping
-    public List<MerchantResponse> getMerchants() {
-        return merchantService.getMerchants();
-    }
-
     @GetMapping("/{merchantId}")
     public MerchantResponse getMerchant(@PathVariable Long merchantId) {
         return merchantService.getMerchant(merchantId);
+    }
+
+    @GetMapping
+    public Page<MerchantResponse> getMerchants(Pageable pageable) {
+        return merchantService.getMerchants(pageable);
     }
 }

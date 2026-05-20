@@ -10,11 +10,12 @@ import com.erumpay.merchantservice.global.exception.DuplicateMerchantException;
 import com.erumpay.merchantservice.global.exception.MerchantNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -69,10 +70,8 @@ public class MerchantService {
         return MerchantResponse.from(merchant);
     }
 
-    public List<MerchantResponse> getMerchants() {
-        return merchantRepository.findAll()
-                .stream()
-                .map(MerchantResponse::from)
-                .toList();
+    public Page<MerchantResponse> getMerchants(Pageable pageable) {
+        return merchantRepository.findAll(pageable)
+                .map(MerchantResponse::from);
     }
 }
