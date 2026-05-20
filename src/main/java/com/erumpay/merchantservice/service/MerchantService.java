@@ -21,6 +21,12 @@ public class MerchantService {
 
     @Transactional
     public MerchantResponse createMerchant(MerchantCreateRequest request) {
+        // 중복 검사
+        if (merchantRepository.existsByBusinessNumber(request.businessNumber())) {
+            throw new IllegalArgumentException("이미 등록된 사업자번호입니다.");
+        }
+
+        // Entity 생성
         Merchant merchant = Merchant.builder()
                 .merchantName(request.merchantName())
                 .businessNumber(request.businessNumber())
