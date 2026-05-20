@@ -6,6 +6,8 @@ import com.erumpay.merchantservice.entity.Merchant;
 import com.erumpay.merchantservice.enums.ApiKeyStatus;
 import com.erumpay.merchantservice.enums.MerchantStatus;
 import com.erumpay.merchantservice.repository.MerchantRepository;
+import com.erumpay.merchantservice.global.exception.DuplicateMerchantException;
+import com.erumpay.merchantservice.global.exception.MerchantNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,13 +43,27 @@ public class MerchantService {
         try {
             return MerchantResponse.from(merchantRepository.save(merchant));
         } catch (DataIntegrityViolationException e) {
-            throw new IllegalArgumentException("이미 등록된 사업자번호입니다.");
+
+            String message = e.getMostSpecificCause().getMessage();
+
+            if (message != null && message.contains("business_number")) {
+                throw new DuplicateMerchantException(
+                        "이미 등록된 사업자번호입니다.",
+                        e
+                );
+            }
+
+            throw e;
         }
     }
 
     public MerchantResponse getMerchant(Long merchantId) {
         Merchant merchant = merchantRepository.findById(merchantId)
-                .orElseThrow(() -> new IllegalArgumentException("Merchant not found. id=" + merchantId));
+                .orElseThrow(() ->
+                        new MerchantNotFoundException(
+                                "Merchant not found. id=" + merchantId
+                        )
+                );
 
         return MerchantResponse.from(merchant);
     }

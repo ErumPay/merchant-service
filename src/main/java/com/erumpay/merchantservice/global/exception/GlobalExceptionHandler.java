@@ -8,10 +8,19 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException e) {
+    @ExceptionHandler(DuplicateMerchantException.class)
+    public ResponseEntity<String> handleDuplicateMerchantException(
+            DuplicateMerchantException e) {
 
         return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(e.getMessage());
+    }
+
+    @ExceptionHandler(MerchantNotFoundException.class)
+    public ResponseEntity<String> handleMerchantNotFoundException(
+            MerchantNotFoundException e) {
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(e.getMessage());
     }
 }
