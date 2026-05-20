@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,7 +37,13 @@ public class MerchantController {
     }
 
     @GetMapping
-    public Page<MerchantResponse> getMerchants(Pageable pageable) {
+    public Page<MerchantResponse> getMerchants(
+            @PageableDefault(
+                    size = 20,
+                    sort = "merchantId",
+                    direction = Sort.Direction.DESC
+            ) Pageable pageable
+    ) {
         return merchantService.getMerchants(pageable);
     }
 }
