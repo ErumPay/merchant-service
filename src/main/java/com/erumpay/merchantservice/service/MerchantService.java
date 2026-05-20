@@ -9,6 +9,7 @@ import com.erumpay.merchantservice.repository.MerchantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.time.LocalDateTime;
 
@@ -21,12 +22,6 @@ public class MerchantService {
 
     @Transactional
     public MerchantResponse createMerchant(MerchantCreateRequest request) {
-        // 중복 검사
-        if (merchantRepository.existsByBusinessNumber(request.businessNumber())) {
-            throw new IllegalArgumentException("이미 등록된 사업자번호입니다.");
-        }
-
-        // Entity 생성
         Merchant merchant = Merchant.builder()
                 .merchantName(request.merchantName())
                 .businessNumber(request.businessNumber())
@@ -43,7 +38,11 @@ public class MerchantService {
                 .status(MerchantStatus.DRAFT)
                 .build();
 
-        return MerchantResponse.from(merchantRepository.save(merchant));
+        try {
+            return MerchantResponse.from(merchantRepository.save(merchant));
+        } catch (DataIntegrityViolationException e) {
+            throw new IllegalArgumentException("이미 등록된 사업자번호입니다.");
+        }
     }
 
     public MerchantResponse getMerchant(Long merchantId) {
