@@ -4,6 +4,7 @@ import com.erumpay.merchantservice.dto.MerchantCreateRequest;
 import com.erumpay.merchantservice.dto.MerchantResponse;
 import com.erumpay.merchantservice.service.MerchantService;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/merchants")
+@RequestMapping("/api/v1/pg-admin/merchants")
 public class MerchantController {
 
     private final MerchantService merchantService;
@@ -25,6 +26,11 @@ public class MerchantController {
     @ResponseStatus(HttpStatus.CREATED)
     public MerchantResponse createMerchant(@Valid @RequestBody MerchantCreateRequest request) {
         return merchantService.createMerchant(request);
+    }
+
+    @GetMapping
+    public List<MerchantResponse> getMerchants() {
+        return merchantService.getMerchants();
     }
 
     @GetMapping("/{merchantId}")

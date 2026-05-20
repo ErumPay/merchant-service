@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -66,5 +67,12 @@ public class MerchantService {
                 );
 
         return MerchantResponse.from(merchant);
+    }
+
+    public List<MerchantResponse> getMerchants() {
+        return merchantRepository.findAll()
+                .stream()
+                .map(MerchantResponse::from)
+                .toList();
     }
 }
