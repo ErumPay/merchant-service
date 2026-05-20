@@ -10,6 +10,8 @@ import com.erumpay.merchantservice.global.exception.DuplicateMerchantException;
 import com.erumpay.merchantservice.global.exception.MerchantNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.dao.DataIntegrityViolationException;
 
@@ -66,5 +68,10 @@ public class MerchantService {
                 );
 
         return MerchantResponse.from(merchant);
+    }
+
+    public Page<MerchantResponse> getMerchants(Pageable pageable) {
+        return merchantRepository.findAll(pageable)
+                .map(MerchantResponse::from);
     }
 }

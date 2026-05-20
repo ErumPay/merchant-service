@@ -13,10 +13,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/merchants")
+@RequestMapping("/api/v1/pg-admin/merchants")
 public class MerchantController {
 
     private final MerchantService merchantService;
@@ -30,5 +34,16 @@ public class MerchantController {
     @GetMapping("/{merchantId}")
     public MerchantResponse getMerchant(@PathVariable Long merchantId) {
         return merchantService.getMerchant(merchantId);
+    }
+
+    @GetMapping
+    public Page<MerchantResponse> getMerchants(
+            @PageableDefault(
+                    size = 20,
+                    sort = "merchantId",
+                    direction = Sort.Direction.DESC
+            ) Pageable pageable
+    ) {
+        return merchantService.getMerchants(pageable);
     }
 }
