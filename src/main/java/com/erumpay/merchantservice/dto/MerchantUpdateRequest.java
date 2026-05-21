@@ -27,6 +27,7 @@ public record MerchantUpdateRequest(
 
         @NotBlank
         @Size(min = 4, max = 4)
+        @Pattern(regexp = "\\d{4}", message = "MCC 코드는 숫자 4자리여야 합니다.")
         String mccCode,
 
         @NotNull
