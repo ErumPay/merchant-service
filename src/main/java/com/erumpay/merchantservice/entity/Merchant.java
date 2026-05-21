@@ -119,4 +119,27 @@ public class Merchant {
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
+    public void updateInfo(
+            String merchantName,
+            String ownerName,
+            String contactPhone,
+            String businessAddress,
+            String categoryName,
+            String mccCode,
+            BigDecimal feeRate,
+            String settlementAccount
+    ){
+        this.merchantName = merchantName;
+        this.ownerName = ownerName;
+        this.contactPhone = contactPhone;
+        this.businessAddress = businessAddress;
+        this.categoryName = categoryName;
+        this.mccCode = mccCode;
+        this.feeRate = feeRate;
+        this.settlementAccount = settlementAccount;
+    }
+
+
+
 }
