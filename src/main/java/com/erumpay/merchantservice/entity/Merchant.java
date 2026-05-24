@@ -3,6 +3,7 @@ package com.erumpay.merchantservice.entity;
 import com.erumpay.merchantservice.enums.ApiKeyStatus;
 import com.erumpay.merchantservice.enums.MerchantStatus;
 
+import com.erumpay.merchantservice.global.exception.MerchantAlreadyDeletedException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -159,7 +160,7 @@ public class Merchant {
 
     public void softDelete(){
         if (this.deletedAt != null) {
-            throw new IllegalStateException("이미 삭제된 가맹점입니다.");
+            throw new MerchantAlreadyDeletedException("이미 삭제된 가맹점입니다.");
         }
 
         this.deletedAt = LocalDateTime.now();
