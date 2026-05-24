@@ -140,6 +140,21 @@ public class Merchant {
         this.settlementAccount = settlementAccount;
     }
 
+    public void changeStatus(
+        MerchantStatus status,
+        String suspendReason
+    ){
+        if (status == MerchantStatus.SUSPENDED && (suspendReason == null || suspendReason.isBlank())) {
+            throw new IllegalArgumentException("정지 상태로 변경할 때는 정지 사유가 필요합니다.");
+        }
 
+        this.status = status;
+
+        if (status == MerchantStatus.SUSPENDED) {
+            this.suspendReason = suspendReason;
+        } else {
+            this.suspendReason = null;
+        }
+    }
 
 }

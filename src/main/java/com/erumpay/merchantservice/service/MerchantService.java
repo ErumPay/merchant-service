@@ -2,6 +2,7 @@ package com.erumpay.merchantservice.service;
 
 import com.erumpay.merchantservice.dto.MerchantCreateRequest;
 import com.erumpay.merchantservice.dto.MerchantResponse;
+import com.erumpay.merchantservice.dto.MerchantStatusUpdateRequest;
 import com.erumpay.merchantservice.dto.MerchantUpdateRequest;
 import com.erumpay.merchantservice.entity.Merchant;
 import com.erumpay.merchantservice.enums.ApiKeyStatus;
@@ -98,5 +99,22 @@ public class MerchantService {
 
         return MerchantResponse.from(merchant);
 
+    }
+
+    @Transactional
+    public MerchantResponse updateMerchantStatus(Long merchantId, MerchantStatusUpdateRequest request){
+        Merchant merchant = merchantRepository.findById(merchantId)
+                .orElseThrow(() ->
+                        new MerchantNotFoundException(
+                                "Merchant not found. id=" + merchantId
+                        )
+                );
+
+        merchant.changeStatus(
+                request.status(),
+                request.suspendReason()
+        );
+
+        return MerchantResponse.from(merchant);
     }
 }
