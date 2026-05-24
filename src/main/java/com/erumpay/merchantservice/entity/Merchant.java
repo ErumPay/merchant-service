@@ -157,4 +157,11 @@ public class Merchant {
         }
     }
 
+    public void softDelete(){
+        if (this.deletedAt != null) {
+            throw new IllegalStateException("이미 삭제된 가맹점입니다.");
+        }
+
+        this.deletedAt = LocalDateTime.now();
+    }
 }
