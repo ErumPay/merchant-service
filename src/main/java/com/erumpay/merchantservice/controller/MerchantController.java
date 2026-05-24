@@ -2,6 +2,7 @@ package com.erumpay.merchantservice.controller;
 
 import com.erumpay.merchantservice.dto.MerchantCreateRequest;
 import com.erumpay.merchantservice.dto.MerchantResponse;
+import com.erumpay.merchantservice.dto.MerchantStatusUpdateRequest;
 import com.erumpay.merchantservice.dto.MerchantUpdateRequest;
 import com.erumpay.merchantservice.service.MerchantService;
 import jakarta.validation.Valid;
@@ -50,5 +51,11 @@ public class MerchantController {
         return merchantService.updateMerchant(merchantId, request);
     }
 
-
+    @PatchMapping("/{merchantId}/status")
+    public MerchantResponse updateMerchantStatus(
+            @PathVariable Long merchantId,
+            @Valid @RequestBody MerchantStatusUpdateRequest request
+    ){
+        return merchantService.updateMerchantStatus(merchantId, request);
+    }
 }

@@ -140,6 +140,12 @@ public class Merchant {
         this.settlementAccount = settlementAccount;
     }
 
-
+    public void changeStatus(
+        MerchantStatus status,
+        String suspendReason
+    ){
+        this.status = status;
+        this.suspendReason = suspendReason;
+    }
 
 }
