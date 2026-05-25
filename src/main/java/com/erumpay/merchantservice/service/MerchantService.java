@@ -183,4 +183,20 @@ public class MerchantService {
 
         return ReceiptMerchantInfoResponse.from(merchant);
     }
+
+    public ApiKeyRotateResponse rotateApiKey(Long merchantId) {
+        Merchant merchant = merchantRepository.findByMerchantIdAndDeletedAtIsNull(merchantId)
+                .orElseThrow(() ->
+                        new MerchantNotFoundException(
+                                "Merchant not found. id=" + merchantId
+                        )
+                );
+
+        String apiKey = generateApiKey();
+        LocalDateTime rotatedAt = LocalDateTime.now();
+
+        merchant.rotateApiKey(apiKey, rotatedAt);
+
+        return ApiKeyRotateResponse.from(merchant);
+    }
 }
