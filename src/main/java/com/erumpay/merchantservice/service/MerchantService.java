@@ -125,4 +125,16 @@ public class MerchantService {
 
         return InternalMerchantResponse.from(merchant);
     }
+
+    @Transactional
+    public void deleteMerchant(Long merchantId) {
+        Merchant merchant = merchantRepository.findById(merchantId)
+                .orElseThrow(() ->
+                        new MerchantNotFoundException(
+                                "Merchant not found. id=" + merchantId
+                        )
+                );
+
+        merchant.softDelete();
+    }
 }

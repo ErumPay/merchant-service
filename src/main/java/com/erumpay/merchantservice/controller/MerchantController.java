@@ -58,4 +58,12 @@ public class MerchantController {
     ){
         return merchantService.updateMerchantStatus(merchantId, request);
     }
+
+    @DeleteMapping("/{merchantId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteMerchant(
+            @PathVariable Long merchantId
+    ){
+        merchantService.deleteMerchant(merchantId);
+    }
 }

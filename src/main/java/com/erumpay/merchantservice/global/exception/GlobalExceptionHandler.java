@@ -55,4 +55,17 @@ public class GlobalExceptionHandler {
                         MDC.get("traceId")
                 ));
     }
+
+    @ExceptionHandler(MerchantAlreadyDeletedException.class)
+    public ResponseEntity<ErrorResponse> handleMerchantAlreadyDeletedException(
+            MerchantAlreadyDeletedException e
+    ) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ErrorResponse(
+                        HttpStatus.CONFLICT.name(),
+                        e.getMessage(),
+                        LocalDateTime.now(),
+                        MDC.get("traceId")
+                ));
+    }
 }
