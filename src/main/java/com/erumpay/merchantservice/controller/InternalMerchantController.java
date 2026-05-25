@@ -3,6 +3,7 @@ package com.erumpay.merchantservice.controller;
 import com.erumpay.merchantservice.dto.InternalMerchantResponse;
 import com.erumpay.merchantservice.dto.MerchantValidationResponse;
 import com.erumpay.merchantservice.dto.SettlementPolicyResponse;
+import com.erumpay.merchantservice.dto.ReceiptMerchantInfoResponse;
 import com.erumpay.merchantservice.service.MerchantService;
 
 import lombok.RequiredArgsConstructor;
@@ -28,5 +29,10 @@ public class InternalMerchantController {
     @GetMapping("/{merchantId}/settlement-policy")
     public SettlementPolicyResponse getSettlementPolicy(@PathVariable Long merchantId) {
         return merchantService.getSettlementPolicy(merchantId);
+    }
+
+    @GetMapping("/{merchantId}/receipt-info")
+    public ReceiptMerchantInfoResponse getReceiptMerchantInfo(@PathVariable Long merchantId) {
+        return merchantService.getReceiptMerchantInfo(merchantId);
     }
 }

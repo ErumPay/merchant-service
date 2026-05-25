@@ -160,4 +160,15 @@ public class MerchantService {
         return SettlementPolicyResponse.from(merchant);
 
     }
+
+    public ReceiptMerchantInfoResponse getReceiptMerchantInfo(Long merchantId){
+        Merchant merchant = merchantRepository.findById(merchantId)
+                .orElseThrow(() ->
+                        new MerchantNotFoundException(
+                                "Merchant not found. id=" + merchantId
+                        )
+                );
+
+        return ReceiptMerchantInfoResponse.from(merchant);
+    }
 }
