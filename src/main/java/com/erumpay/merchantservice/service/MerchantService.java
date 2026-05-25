@@ -14,7 +14,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.util.Base64;
 
 @Service
 @RequiredArgsConstructor
@@ -23,8 +25,18 @@ public class MerchantService {
 
     private final MerchantRepository merchantRepository;
 
+    private String generateApiKey() {
+        byte[] bytes = new byte[32];
+        new SecureRandom().nextBytes(bytes);
+        return Base64.getUrlEncoder()
+                .withoutPadding()
+                .encodeToString(bytes);
+    }
+
     @Transactional
     public MerchantResponse createMerchant(MerchantCreateRequest request) {
+        String apiKey = generateApiKey();
+
         Merchant merchant = Merchant.builder()
                 .merchantName(request.merchantName())
                 .businessNumber(request.businessNumber())
@@ -33,9 +45,9 @@ public class MerchantService {
                 .businessAddress(request.businessAddress())
                 .categoryName(request.categoryName())
                 .mccCode(request.mccCode())
-                .apiKey(request.apiKey())
                 .feeRate(request.feeRate())
                 .settlementAccount(request.settlementAccount())
+                .apiKey(apiKey)
                 .apiKeyStatus(ApiKeyStatus.ACTIVE)
                 .apiKeyIssuedAt(LocalDateTime.now())
                 .status(MerchantStatus.DRAFT)

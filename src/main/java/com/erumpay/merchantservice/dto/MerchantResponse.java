@@ -28,6 +28,18 @@ public record MerchantResponse(
         LocalDateTime deletedAt,
         LocalDateTime createdAt) {
 
+    private static String maskApiKey(String apiKey) {
+        if (apiKey == null || apiKey.isBlank()) {
+            return null;
+        }
+
+        if (apiKey.length() <= 4) {
+            return "****";
+        }
+
+        return "****" + apiKey.substring(apiKey.length() - 4);
+    }
+
     public static MerchantResponse from(Merchant merchant) {
         return new MerchantResponse(
                 merchant.getMerchantId(),
@@ -38,7 +50,7 @@ public record MerchantResponse(
                 merchant.getBusinessAddress(),
                 merchant.getCategoryName(),
                 merchant.getMccCode(),
-                merchant.getApiKey(),
+                maskApiKey(merchant.getApiKey()),
                 merchant.getApiKeyStatus(),
                 merchant.getApiKeyIssuedAt(),
                 merchant.getApiKeyRotatedAt(),

@@ -31,11 +31,8 @@ public record MerchantCreateRequest(
 
         @NotBlank
         @Size(min = 4, max = 4)
+        @Pattern(regexp = "\\d{4}", message = "MCC 코드는 숫자 4자리여야 합니다.")
         String mccCode,
-
-        @NotBlank
-        @Size(max = 255)
-        String apiKey,
 
         @NotNull
         @DecimalMin("0.00")
