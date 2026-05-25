@@ -59,7 +59,7 @@ public class MerchantService {
     }
 
     public MerchantResponse getMerchant(Long merchantId) {
-        Merchant merchant = merchantRepository.findById(merchantId)
+        Merchant merchant = merchantRepository.findByMerchantIdAndDeletedAtIsNull(merchantId)
                 .orElseThrow(() ->
                         new MerchantNotFoundException(
                                 "Merchant not found. id=" + merchantId
@@ -70,13 +70,13 @@ public class MerchantService {
     }
 
     public Page<MerchantResponse> getMerchants(Pageable pageable) {
-        return merchantRepository.findAll(pageable)
+        return merchantRepository.findByDeletedAtIsNull(pageable)
                 .map(MerchantResponse::from);
     }
 
     @Transactional
     public MerchantResponse updateMerchant(Long merchantId, MerchantUpdateRequest request){
-        Merchant merchant = merchantRepository.findById(merchantId)
+        Merchant merchant = merchantRepository.findByMerchantIdAndDeletedAtIsNull(merchantId)
                 .orElseThrow(() ->
                         new MerchantNotFoundException(
                                 "Merchant not found. id=" + merchantId
@@ -100,7 +100,7 @@ public class MerchantService {
 
     @Transactional
     public MerchantResponse updateMerchantStatus(Long merchantId, MerchantStatusUpdateRequest request){
-        Merchant merchant = merchantRepository.findById(merchantId)
+        Merchant merchant = merchantRepository.findByMerchantIdAndDeletedAtIsNull(merchantId)
                 .orElseThrow(() ->
                         new MerchantNotFoundException(
                                 "Merchant not found. id=" + merchantId
@@ -116,7 +116,7 @@ public class MerchantService {
     }
 
     public InternalMerchantResponse getInternalMerchant(Long merchantId) {
-        Merchant merchant = merchantRepository.findById(merchantId)
+        Merchant merchant = merchantRepository.findByMerchantIdAndDeletedAtIsNull(merchantId)
                 .orElseThrow(() ->
                         new MerchantNotFoundException(
                                 "Merchant not found. id=" + merchantId
@@ -128,7 +128,7 @@ public class MerchantService {
 
     @Transactional
     public void deleteMerchant(Long merchantId) {
-        Merchant merchant = merchantRepository.findById(merchantId)
+        Merchant merchant = merchantRepository.findByMerchantIdAndDeletedAtIsNull(merchantId)
                 .orElseThrow(() ->
                         new MerchantNotFoundException(
                                 "Merchant not found. id=" + merchantId
@@ -139,7 +139,7 @@ public class MerchantService {
     }
 
     public MerchantValidationResponse validateMerchant(Long merchantId) {
-        Merchant merchant = merchantRepository.findById(merchantId)
+        Merchant merchant = merchantRepository.findByMerchantIdAndDeletedAtIsNull(merchantId)
                 .orElseThrow(() ->
                         new MerchantNotFoundException(
                                 "Merchant not found. id=" + merchantId
@@ -150,7 +150,7 @@ public class MerchantService {
     }
 
     public SettlementPolicyResponse getSettlementPolicy(Long merchantId) {
-        Merchant merchant = merchantRepository.findById(merchantId)
+        Merchant merchant = merchantRepository.findByMerchantIdAndDeletedAtIsNull(merchantId)
                 .orElseThrow(() ->
                         new MerchantNotFoundException(
                                 "Merchant not found. id=" + merchantId
@@ -162,7 +162,7 @@ public class MerchantService {
     }
 
     public ReceiptMerchantInfoResponse getReceiptMerchantInfo(Long merchantId){
-        Merchant merchant = merchantRepository.findById(merchantId)
+        Merchant merchant = merchantRepository.findByMerchantIdAndDeletedAtIsNull(merchantId)
                 .orElseThrow(() ->
                         new MerchantNotFoundException(
                                 "Merchant not found. id=" + merchantId
