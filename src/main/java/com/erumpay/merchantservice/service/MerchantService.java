@@ -137,4 +137,15 @@ public class MerchantService {
 
         merchant.softDelete();
     }
+
+    public MerchantValidationResponse validateMerchant(Long merchantId) {
+        Merchant merchant = merchantRepository.findById(merchantId)
+                .orElseThrow(() ->
+                        new MerchantNotFoundException(
+                                "Merchant not found. id=" + merchantId
+                        )
+                );
+
+        return MerchantValidationResponse.from(merchant);
+    }
 }
