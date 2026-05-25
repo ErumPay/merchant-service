@@ -148,4 +148,15 @@ public class MerchantService {
 
         return MerchantValidationResponse.from(merchant);
     }
+
+    public ReceiptMerchantInfoResponse getReceiptMerchantInfo(Long merchantId){
+        Merchant merchant = merchantRepository.findById(merchantId)
+                .orElseThrow(() ->
+                        new MerchantNotFoundException(
+                                "Merchant not found. id=" + merchantId
+                        )
+                );
+
+        return ReceiptMerchantInfoResponse.from(merchant);
+    }
 }
