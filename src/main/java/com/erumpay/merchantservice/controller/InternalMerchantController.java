@@ -1,6 +1,6 @@
 package com.erumpay.merchantservice.controller;
 
-import com.erumpay.merchantservice.dto.MerchantResponse;
+import com.erumpay.merchantservice.dto.InternalMerchantResponse;
 import com.erumpay.merchantservice.service.MerchantService;
 
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,7 @@ public class InternalMerchantController {
     private final MerchantService merchantService;
 
     @GetMapping("/{merchantId}")
-    public MerchantResponse InternalMerchantController(@PathVariable Long merchantId) {
-        return merchantService.getMerchant(merchantId);
+    public InternalMerchantResponse getInternalMerchant(@PathVariable Long merchantId) {
+        return merchantService.getInternalMerchant(merchantId);
     }
 }
