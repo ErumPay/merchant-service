@@ -19,6 +19,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -232,5 +233,19 @@ public class MerchantService {
         }
 
         return ApiKeyValidationResponse.invalid();
+    }
+
+    public List<MerchantStatusHistoryResponse> getMerchantStatusHistories(Long merchantId) {
+        merchantRepository.findByMerchantIdAndDeletedAtIsNull(merchantId)
+                .orElseThrow(() ->
+                        new MerchantNotFoundException(
+                                "Merchant not found. id=" + merchantId
+                        )
+                );
+
+        return merchantStatusHistoryRepository.findByMerchantMerchantIdOrderByChangedAtDesc(merchantId)
+                .stream()
+                .map(MerchantStatusHistoryResponse::from)
+                .toList();
     }
 }

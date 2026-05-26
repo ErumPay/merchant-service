@@ -1,11 +1,14 @@
 package com.erumpay.merchantservice.controller;
 
 import com.erumpay.merchantservice.dto.*;
+import com.erumpay.merchantservice.entity.MerchantStatusHistory;
 import com.erumpay.merchantservice.service.MerchantService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,7 +38,7 @@ public class InternalMerchantController {
     }
 
     @PostMapping("/api-key/validate")
-    public ApiKeyValidationResponse validateApiKey(@Valid @RequestBody ApiKeyValidationRequest request){
+    public ApiKeyValidationResponse validateApiKey(@Valid @RequestBody ApiKeyValidationRequest request) {
         return merchantService.validateApiKey(request);
     }
 }
