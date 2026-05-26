@@ -16,4 +16,6 @@ public interface MerchantRepository extends JpaRepository<Merchant, Long> {
     Optional<Merchant> findByMerchantIdAndDeletedAtIsNull(Long merchantId);
 
     Page<Merchant> findByDeletedAtIsNull(Pageable pageable);
+
+    Optional<Merchant> findByApiKeyAndDeletedAtIsNull(String apiKey);
 }
