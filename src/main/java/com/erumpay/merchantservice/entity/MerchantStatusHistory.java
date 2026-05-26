@@ -17,7 +17,7 @@ public class MerchantStatusHistory {
     @GeneratedValue
     private Long historyId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "merchant_id", nullable = false)
     private Merchant merchant;
 
@@ -40,20 +40,6 @@ public class MerchantStatusHistory {
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
-
-    public MerchantStatusHistory(
-            Merchant merchant,
-            MerchantStatus fromStatus,
-            MerchantStatus toStatus,
-            String reason,
-            Long changedBy
-    ){
-        this.merchant = merchant;
-        this.fromStatus = fromStatus;
-        this.toStatus = toStatus;
-        this.reason = reason;
-        this.changedBy = changedBy;
-    }
 
     public static MerchantStatusHistory create(
             Merchant merchant,
