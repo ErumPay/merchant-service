@@ -65,6 +65,7 @@ public class MerchantController {
         merchantService.deleteMerchant(merchantId);
     }
 
+    @Transactional(readOnly = true)
     @PatchMapping("/{merchantId}/api-key/rotate")
     public ApiKeyRotateResponse rotateApiKey(
             @PathVariable Long merchantId
