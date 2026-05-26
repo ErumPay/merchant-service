@@ -2,11 +2,13 @@ package com.erumpay.merchantservice.service;
 
 import com.erumpay.merchantservice.dto.*;
 import com.erumpay.merchantservice.entity.Merchant;
+import com.erumpay.merchantservice.entity.MerchantStatusHistory;
 import com.erumpay.merchantservice.enums.ApiKeyStatus;
 import com.erumpay.merchantservice.enums.MerchantStatus;
 import com.erumpay.merchantservice.repository.MerchantRepository;
 import com.erumpay.merchantservice.global.exception.DuplicateMerchantException;
 import com.erumpay.merchantservice.global.exception.MerchantNotFoundException;
+import com.erumpay.merchantservice.repository.MerchantStatusHistoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
@@ -17,6 +19,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,6 +28,7 @@ import java.util.Optional;
 public class MerchantService {
 
     private final MerchantRepository merchantRepository;
+    private final MerchantStatusHistoryRepository merchantStatusHistoryRepository;
 
     private String generateApiKey() {
         byte[] bytes = new byte[32];
@@ -120,10 +124,22 @@ public class MerchantService {
                         )
                 );
 
+        MerchantStatus fromStatus = merchant.getStatus();
+
         merchant.changeStatus(
                 request.status(),
                 request.suspendReason()
         );
+
+        MerchantStatusHistory history = MerchantStatusHistory.create(
+                merchant,
+                fromStatus,
+                request.status(),
+                request.suspendReason(),
+                0L
+        );
+
+        merchantStatusHistoryRepository.save(history);
 
         return MerchantResponse.from(merchant);
     }
@@ -217,5 +233,19 @@ public class MerchantService {
         }
 
         return ApiKeyValidationResponse.invalid();
+    }
+
+    public List<MerchantStatusHistoryResponse> getMerchantStatusHistories(Long merchantId) {
+        merchantRepository.findByMerchantIdAndDeletedAtIsNull(merchantId)
+                .orElseThrow(() ->
+                        new MerchantNotFoundException(
+                                "Merchant not found. id=" + merchantId
+                        )
+                );
+
+        return merchantStatusHistoryRepository.findByMerchantMerchantIdOrderByChangedAtDesc(merchantId)
+                .stream()
+                .map(MerchantStatusHistoryResponse::from)
+                .toList();
     }
 }

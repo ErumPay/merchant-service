@@ -12,6 +12,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/pg-admin/merchants")
@@ -70,5 +72,10 @@ public class MerchantController {
             @PathVariable Long merchantId
     ){
         return merchantService.rotateApiKey(merchantId);
+    }
+
+    @GetMapping("/{merchantId}/status-history")
+    public List<MerchantStatusHistoryResponse> getMerchantStatusHistories(@PathVariable Long merchantId){
+        return merchantService.getMerchantStatusHistories(merchantId);
     }
 }
