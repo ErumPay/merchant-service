@@ -165,4 +165,10 @@ public class Merchant {
 
         this.deletedAt = LocalDateTime.now();
     }
+
+    public void rotateApiKey(String apiKey, LocalDateTime rotatedAt){
+        this.apiKey = apiKey;
+        this.apiKeyStatus = ApiKeyStatus.ACTIVE;
+        this.apiKeyRotatedAt = rotatedAt;
+    }
 }

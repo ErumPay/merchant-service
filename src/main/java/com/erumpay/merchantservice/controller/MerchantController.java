@@ -1,13 +1,11 @@
 package com.erumpay.merchantservice.controller;
 
-import com.erumpay.merchantservice.dto.MerchantCreateRequest;
-import com.erumpay.merchantservice.dto.MerchantResponse;
-import com.erumpay.merchantservice.dto.MerchantStatusUpdateRequest;
-import com.erumpay.merchantservice.dto.MerchantUpdateRequest;
+import com.erumpay.merchantservice.dto.*;
 import com.erumpay.merchantservice.service.MerchantService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -65,5 +63,12 @@ public class MerchantController {
             @PathVariable Long merchantId
     ){
         merchantService.deleteMerchant(merchantId);
+    }
+
+    @PatchMapping("/{merchantId}/api-key/rotate")
+    public ApiKeyRotateResponse rotateApiKey(
+            @PathVariable Long merchantId
+    ){
+        return merchantService.rotateApiKey(merchantId);
     }
 }

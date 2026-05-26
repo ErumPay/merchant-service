@@ -17,6 +17,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -182,5 +183,39 @@ public class MerchantService {
                 );
 
         return ReceiptMerchantInfoResponse.from(merchant);
+    }
+
+    @Transactional
+    public ApiKeyRotateResponse rotateApiKey(Long merchantId) {
+        Merchant merchant = merchantRepository.findByMerchantIdAndDeletedAtIsNull(merchantId)
+                .orElseThrow(() ->
+                        new MerchantNotFoundException(
+                                "Merchant not found. id=" + merchantId
+                        )
+                );
+
+        String apiKey = generateApiKey();
+        LocalDateTime rotatedAt = LocalDateTime.now();
+
+        merchant.rotateApiKey(apiKey, rotatedAt);
+
+        return ApiKeyRotateResponse.from(merchant);
+    }
+
+    public ApiKeyValidationResponse validateApiKey(ApiKeyValidationRequest request) {
+        Optional<Merchant> merchantOptional = merchantRepository.findByApiKeyAndDeletedAtIsNull(request.apiKey());
+
+        if (merchantOptional.isEmpty()) {
+            return ApiKeyValidationResponse.invalid();
+        }
+
+        Merchant merchant = merchantOptional.get();
+
+        if (merchant.getStatus() == MerchantStatus.ACTIVE
+                && merchant.getApiKeyStatus() == ApiKeyStatus.ACTIVE) {
+            return ApiKeyValidationResponse.valid(merchant);
+        }
+
+        return ApiKeyValidationResponse.invalid();
     }
 }

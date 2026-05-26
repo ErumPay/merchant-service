@@ -1,11 +1,9 @@
 package com.erumpay.merchantservice.controller;
 
-import com.erumpay.merchantservice.dto.InternalMerchantResponse;
-import com.erumpay.merchantservice.dto.MerchantValidationResponse;
-import com.erumpay.merchantservice.dto.SettlementPolicyResponse;
-import com.erumpay.merchantservice.dto.ReceiptMerchantInfoResponse;
+import com.erumpay.merchantservice.dto.*;
 import com.erumpay.merchantservice.service.MerchantService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,5 +32,10 @@ public class InternalMerchantController {
     @GetMapping("/{merchantId}/receipt-info")
     public ReceiptMerchantInfoResponse getReceiptMerchantInfo(@PathVariable Long merchantId) {
         return merchantService.getReceiptMerchantInfo(merchantId);
+    }
+
+    @PostMapping("/api-key/validate")
+    public ApiKeyValidationResponse validateApiKey(@Valid @RequestBody ApiKeyValidationRequest request){
+        return merchantService.validateApiKey(request);
     }
 }
