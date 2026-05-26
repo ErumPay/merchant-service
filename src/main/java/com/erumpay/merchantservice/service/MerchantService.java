@@ -185,6 +185,7 @@ public class MerchantService {
         return ReceiptMerchantInfoResponse.from(merchant);
     }
 
+    @Transactional
     public ApiKeyRotateResponse rotateApiKey(Long merchantId) {
         Merchant merchant = merchantRepository.findByMerchantIdAndDeletedAtIsNull(merchantId)
                 .orElseThrow(() ->
