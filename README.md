@@ -83,48 +83,6 @@ MYSQL_ROOT_PASSWORD=your_root_password
 
 `.env` 파일은 Git에 커밋하지 않습니다.
 
-## Docker 실행
-
-이미지를 빌드합니다.
-
-```bash
-docker build -t merchant-service:local .
-```
-
-컨테이너를 실행합니다.
-```bash
-docker run --name merchant-service \
-  --network erumpay-network \
-  -p 8094:8094 \
-  -e DB_URL=jdbc:mysql://merchant-db:3306/pg_merchant_db \
-  -e DB_USERNAME=your_db_username \
-  -e DB_PASSWORD=your_db_password \
-  merchant-service:local
-```
-
-기존 컨테이너가 남아 있으면 삭제합니다.
-```bash
-docker rm -f merchant-service
-```
-
-로그 확인:
-
-```bash
-docker compose logs -f merchant-service
-```
-
-종료:
-
-```bash
-docker compose down
-```
-
-DB 볼륨까지 삭제:
-
-```bash
-docker compose down -v
-```
-
 ## API 요약
 
 ### 관리자 API
