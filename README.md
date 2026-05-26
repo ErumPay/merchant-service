@@ -94,11 +94,11 @@ docker build -t merchant-service:local .
 컨테이너를 실행합니다.
 ```bash
 docker run --name merchant-service \
-  --network erumpay-infra_erumpay-network \
+  --network erumpay-network \
   -p 8094:8094 \
-  -e DB_URL=jdbc:mysql://mysql:3306/pg_merchant_db \
-  -e DB_USERNAME=root \
-  -e DB_PASSWORD=1234 \
+  -e DB_URL=jdbc:mysql://merchant-db:3306/pg_merchant_db \
+  -e DB_USERNAME=your_db_username \
+  -e DB_PASSWORD=your_db_password \
   merchant-service:local
 ```
 
