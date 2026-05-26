@@ -6,7 +6,7 @@ spring:
     name: merchant-service
 
   datasource:
-    url: jdbc:mysql://localhost:3308/merchant_db
+    url: jdbc:mysql://localhost:3308/pg_merchant_db
     username: root
     password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
