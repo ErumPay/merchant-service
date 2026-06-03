@@ -17,6 +17,15 @@ public class InternalMerchantController {
 
     private final MerchantService merchantService;
 
+    @PostMapping
+    public InternalMerchantCreateResponse createInternalMerchant(
+            @RequestHeader("Idempotency-Key") String idempotencyKey,
+            @RequestBody InternalMerchantCreateRequest request
+    ) {
+        MerchantResponse response = merchantService.createMerchant(request.toMerchantCreateRequest());
+        return InternalMerchantCreateResponse.from(response);
+    }
+
     @GetMapping("/{merchantId}")
     public InternalMerchantResponse getInternalMerchant(@PathVariable Long merchantId) {
         return merchantService.getInternalMerchant(merchantId);
