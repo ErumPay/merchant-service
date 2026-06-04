@@ -2,6 +2,7 @@ package com.erumpay.merchantservice.global.exception;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.net.SocketTimeoutException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.dao.DataAccessResourceFailureException;
@@ -89,9 +90,9 @@ class GlobalExceptionHandlerTest {
     @Test
     @DisplayName("외부 서비스 사용 불가는 MER-EXT-400으로 응답한다")
     void handleExternalServiceUnavailable() {
-        RestClientException exception = new RestClientException("external service unavailable");
+        ResourceAccessException exception = new ResourceAccessException("connection refused");
 
-        ResponseEntity<ErrorResponse> response = handler.handleExternalServiceException(exception, request());
+        ResponseEntity<ErrorResponse> response = handler.handleExternalResourceAccessException(exception, request());
 
         assertErrorResponse(response, ErrorCode.EXTERNAL_SERVICE_UNAVAILABLE);
     }
@@ -99,11 +100,24 @@ class GlobalExceptionHandlerTest {
     @Test
     @DisplayName("외부 서비스 타임아웃은 MER-EXT-402로 응답한다")
     void handleExternalServiceTimeout() {
-        ResourceAccessException exception = new ResourceAccessException("external service timeout");
+        ResourceAccessException exception = new ResourceAccessException(
+                "external service timeout",
+                new SocketTimeoutException("read timed out")
+        );
 
-        ResponseEntity<ErrorResponse> response = handler.handleExternalServiceTimeout(exception, request());
+        ResponseEntity<ErrorResponse> response = handler.handleExternalResourceAccessException(exception, request());
 
         assertErrorResponse(response, ErrorCode.EXTERNAL_SERVICE_TIMEOUT);
+    }
+
+    @Test
+    @DisplayName("RestClientException은 MER-EXT-400으로 응답한다")
+    void handleRestClientException() {
+        RestClientException exception = new RestClientException("external service unavailable");
+
+        ResponseEntity<ErrorResponse> response = handler.handleExternalServiceException(exception, request());
+
+        assertErrorResponse(response, ErrorCode.EXTERNAL_SERVICE_UNAVAILABLE);
     }
 
     @Test

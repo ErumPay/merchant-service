@@ -19,7 +19,7 @@ public class InternalMerchantController {
 
     @PostMapping
     public InternalMerchantCreateResponse createInternalMerchant(
-            @RequestHeader("Idempotency-Key") String idempotencyKey,
+            @RequestHeader(value = "Idempotency-Key", required = false) String idempotencyKey,
             @Valid @RequestBody InternalMerchantCreateRequest request
     ) {
         if (idempotencyKey == null || idempotencyKey.isBlank()) {

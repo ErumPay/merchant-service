@@ -1,6 +1,7 @@
 package com.erumpay.merchantservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -73,6 +74,12 @@ public record InternalMerchantCreateRequest(
             return bankName;
         }
         return bankName + " " + settlementAccount;
+    }
+
+    @AssertTrue(message = "정산 계좌 정보는 은행명을 포함해 100자 이하여야 합니다.")
+    public boolean isSettlementAccountLengthValid() {
+        String account = buildSettlementAccount();
+        return account == null || account.length() <= 100;
     }
 
     private String valueOrDefault(String value, String defaultValue) {

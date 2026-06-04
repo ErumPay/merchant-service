@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Base64;
@@ -83,11 +84,25 @@ public class MerchantService {
             return false;
         }
 
+        if (isUniqueConstraintViolation(exception)
+                && merchantRepository.existsByBusinessNumber(businessNumber)) {
+            return true;
+        }
+
         String lowerMessage = message.toLowerCase(Locale.ROOT);
-        return lowerMessage.contains("duplicate")
-                && (lowerMessage.contains("business")
-                || lowerMessage.contains("business_number")
-                || lowerMessage.contains(businessNumber.toLowerCase(Locale.ROOT)));
+        return lowerMessage.contains("business_number")
+                || lowerMessage.contains(businessNumber.toLowerCase(Locale.ROOT));
+    }
+
+    private boolean isUniqueConstraintViolation(Throwable throwable) {
+        Throwable current = throwable;
+        while (current != null) {
+            if (current instanceof SQLIntegrityConstraintViolationException sqlException) {
+                return "23000".equals(sqlException.getSQLState()) || sqlException.getErrorCode() == 1062;
+            }
+            current = current.getCause();
+        }
+        return false;
     }
 
     public MerchantResponse getMerchant(Long merchantId) {

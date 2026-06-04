@@ -2,13 +2,18 @@ package com.erumpay.merchantservice.global.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
+import java.net.SocketTimeoutException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.context.MessageSourceResolvable;
 import org.springframework.validation.BindException;
+import org.springframework.validation.method.ParameterValidationResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.MissingPathVariableException;
@@ -71,20 +76,26 @@ public class GlobalExceptionHandler {
             IllegalArgumentException exception,
             HttpServletRequest request
     ) {
-        ErrorCode errorCode = ErrorCode.INVALID_MERCHANT_STATUS;
-        log.warn("Invalid merchant status transition. path={}", request.getRequestURI(), exception);
+        ErrorCode errorCode = ErrorCode.INVALID_REQUEST;
+        log.warn("Invalid merchant argument. path={}", request.getRequestURI(), exception);
 
         return ResponseEntity.status(errorCode.getHttpStatus())
                 .body(ErrorResponse.of(errorCode, exception.getMessage(), List.of(), requestId(request)));
     }
 
     @ExceptionHandler(ResourceAccessException.class)
-    public ResponseEntity<ErrorResponse> handleExternalServiceTimeout(
+    public ResponseEntity<ErrorResponse> handleExternalResourceAccessException(
             ResourceAccessException exception,
             HttpServletRequest request
     ) {
-        ErrorCode errorCode = ErrorCode.EXTERNAL_SERVICE_TIMEOUT;
-        log.error("External service timeout. path={}", request.getRequestURI(), exception);
+        ErrorCode errorCode = isTimeout(exception)
+                ? ErrorCode.EXTERNAL_SERVICE_TIMEOUT
+                : ErrorCode.EXTERNAL_SERVICE_UNAVAILABLE;
+        log.error("External service resource access failed. code={}, path={}",
+                errorCode.getCode(),
+                request.getRequestURI(),
+                exception
+        );
 
         return ResponseEntity.status(errorCode.getHttpStatus())
                 .body(ErrorResponse.of(errorCode, errorCode.getMessage(), List.of(), requestId(request)));
@@ -162,6 +173,10 @@ public class GlobalExceptionHandler {
                     .toList();
         }
 
+        if (exception instanceof HandlerMethodValidationException handlerMethodValidationException) {
+            return extractHandlerMethodValidationDetails(handlerMethodValidationException);
+        }
+
         if (exception instanceof MethodArgumentTypeMismatchException methodArgumentTypeMismatchException) {
             return List.of(new FieldErrorDetail(
                     methodArgumentTypeMismatchException.getName(),
@@ -193,6 +208,23 @@ public class GlobalExceptionHandler {
         return List.of();
     }
 
+    private List<FieldErrorDetail> extractHandlerMethodValidationDetails(
+            HandlerMethodValidationException exception
+    ) {
+        List<FieldErrorDetail> details = new ArrayList<>();
+        for (ParameterValidationResult result : exception.getParameterValidationResults()) {
+            String parameterName = result.getMethodParameter().getParameterName();
+            if (parameterName == null || parameterName.isBlank()) {
+                parameterName = "parameter";
+            }
+
+            for (MessageSourceResolvable error : result.getResolvableErrors()) {
+                details.add(new FieldErrorDetail(parameterName, error.getDefaultMessage()));
+            }
+        }
+        return details;
+    }
+
     private String requestId(HttpServletRequest request) {
         String traceId = MDC.get("traceId");
         if (traceId != null && !traceId.isBlank()) {
@@ -205,5 +237,16 @@ public class GlobalExceptionHandler {
         }
 
         return null;
+    }
+
+    private boolean isTimeout(Throwable throwable) {
+        Throwable current = throwable;
+        while (current != null) {
+            if (current instanceof SocketTimeoutException || current instanceof TimeoutException) {
+                return true;
+            }
+            current = current.getCause();
+        }
+        return false;
     }
 }
