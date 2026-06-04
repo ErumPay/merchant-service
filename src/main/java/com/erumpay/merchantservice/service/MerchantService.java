@@ -20,6 +20,7 @@ import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @Service
@@ -40,6 +41,10 @@ public class MerchantService {
 
     @Transactional
     public MerchantResponse createMerchant(MerchantCreateRequest request) {
+        if (merchantRepository.existsByBusinessNumber(request.businessNumber())) {
+            throw new DuplicateMerchantException("이미 등록된 사업자번호입니다.");
+        }
+
         String apiKey = generateApiKey();
 
         Merchant merchant = Merchant.builder()
@@ -61,25 +66,35 @@ public class MerchantService {
         try {
             return MerchantResponse.from(merchantRepository.save(merchant));
         } catch (DataIntegrityViolationException e) {
-
-            String message = e.getMostSpecificCause().getMessage();
-
-            if (message != null && message.contains("business_number")) {
-                throw new DuplicateMerchantException(
-                        "이미 등록된 사업자번호입니다.",
-                        e
-                );
+            if (isDuplicateBusinessNumber(e, request.businessNumber())) {
+                throw new DuplicateMerchantException("이미 등록된 사업자번호입니다.", e);
             }
 
             throw e;
         }
     }
 
+    private boolean isDuplicateBusinessNumber(DataIntegrityViolationException exception, String businessNumber) {
+        String message = exception.getMostSpecificCause() == null
+                ? exception.getMessage()
+                : exception.getMostSpecificCause().getMessage();
+
+        if (message == null) {
+            return false;
+        }
+
+        String lowerMessage = message.toLowerCase(Locale.ROOT);
+        return lowerMessage.contains("duplicate")
+                && (lowerMessage.contains("business")
+                || lowerMessage.contains("business_number")
+                || lowerMessage.contains(businessNumber.toLowerCase(Locale.ROOT)));
+    }
+
     public MerchantResponse getMerchant(Long merchantId) {
         Merchant merchant = merchantRepository.findByMerchantIdAndDeletedAtIsNull(merchantId)
                 .orElseThrow(() ->
                         new MerchantNotFoundException(
-                                "Merchant not found. id=" + merchantId
+                                "가맹점을 찾을 수 없습니다."
                         )
                 );
 
@@ -96,7 +111,7 @@ public class MerchantService {
         Merchant merchant = merchantRepository.findByMerchantIdAndDeletedAtIsNull(merchantId)
                 .orElseThrow(() ->
                         new MerchantNotFoundException(
-                                "Merchant not found. id=" + merchantId
+                                "가맹점을 찾을 수 없습니다."
                         )
                 );
 
@@ -120,7 +135,7 @@ public class MerchantService {
         Merchant merchant = merchantRepository.findByMerchantIdAndDeletedAtIsNull(merchantId)
                 .orElseThrow(() ->
                         new MerchantNotFoundException(
-                                "Merchant not found. id=" + merchantId
+                                "가맹점을 찾을 수 없습니다."
                         )
                 );
 
@@ -148,7 +163,7 @@ public class MerchantService {
         Merchant merchant = merchantRepository.findByMerchantIdAndDeletedAtIsNull(merchantId)
                 .orElseThrow(() ->
                         new MerchantNotFoundException(
-                                "Merchant not found. id=" + merchantId
+                                "가맹점을 찾을 수 없습니다."
                         )
                 );
 
@@ -157,10 +172,10 @@ public class MerchantService {
 
     @Transactional
     public void deleteMerchant(Long merchantId) {
-        Merchant merchant = merchantRepository.findByMerchantIdAndDeletedAtIsNull(merchantId)
+        Merchant merchant = merchantRepository.findByMerchantId(merchantId)
                 .orElseThrow(() ->
                         new MerchantNotFoundException(
-                                "Merchant not found. id=" + merchantId
+                                "가맹점을 찾을 수 없습니다."
                         )
                 );
 
@@ -171,7 +186,7 @@ public class MerchantService {
         Merchant merchant = merchantRepository.findByMerchantIdAndDeletedAtIsNull(merchantId)
                 .orElseThrow(() ->
                         new MerchantNotFoundException(
-                                "Merchant not found. id=" + merchantId
+                                "가맹점을 찾을 수 없습니다."
                         )
                 );
 
@@ -182,7 +197,7 @@ public class MerchantService {
         Merchant merchant = merchantRepository.findByMerchantIdAndDeletedAtIsNull(merchantId)
                 .orElseThrow(() ->
                         new MerchantNotFoundException(
-                                "Merchant not found. id=" + merchantId
+                                "가맹점을 찾을 수 없습니다."
                         )
                 );
 
@@ -194,7 +209,7 @@ public class MerchantService {
         Merchant merchant = merchantRepository.findByMerchantIdAndDeletedAtIsNull(merchantId)
                 .orElseThrow(() ->
                         new MerchantNotFoundException(
-                                "Merchant not found. id=" + merchantId
+                                "가맹점을 찾을 수 없습니다."
                         )
                 );
 
@@ -206,7 +221,7 @@ public class MerchantService {
         Merchant merchant = merchantRepository.findByMerchantIdAndDeletedAtIsNull(merchantId)
                 .orElseThrow(() ->
                         new MerchantNotFoundException(
-                                "Merchant not found. id=" + merchantId
+                                "가맹점을 찾을 수 없습니다."
                         )
                 );
 
@@ -239,7 +254,7 @@ public class MerchantService {
         merchantRepository.findByMerchantIdAndDeletedAtIsNull(merchantId)
                 .orElseThrow(() ->
                         new MerchantNotFoundException(
-                                "Merchant not found. id=" + merchantId
+                                "가맹점을 찾을 수 없습니다."
                         )
                 );
 
