@@ -3,6 +3,7 @@ package com.erumpay.merchantservice.entity;
 import com.erumpay.merchantservice.enums.ApiKeyStatus;
 import com.erumpay.merchantservice.enums.MerchantStatus;
 
+import com.erumpay.merchantservice.global.exception.InvalidMerchantStatusException;
 import com.erumpay.merchantservice.global.exception.MerchantAlreadyDeletedException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -146,7 +147,7 @@ public class Merchant {
         String suspendReason
     ){
         if (status == MerchantStatus.SUSPENDED && (suspendReason == null || suspendReason.isBlank())) {
-            throw new IllegalArgumentException("정지 상태로 변경할 때는 정지 사유가 필요합니다.");
+            throw new InvalidMerchantStatusException("정지 상태로 변경할 때는 정지 사유가 필요합니다.");
         }
 
         this.status = status;

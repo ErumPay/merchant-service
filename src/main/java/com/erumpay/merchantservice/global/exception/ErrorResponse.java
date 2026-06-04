@@ -1,34 +1,26 @@
 package com.erumpay.merchantservice.global.exception;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
-public class ErrorResponse {
+public record ErrorResponse(
+        int status,
+        String error,
+        String code,
+        String reason,
+        String message,
+        List<FieldErrorDetail> details,
+        String requestId
+) {
 
-    private final String code;
-    private final String message;
-    private final LocalDateTime timestamp;
-    private final String traceId;
-
-    public ErrorResponse(String code, String message, LocalDateTime timestamp, String traceId) {
-        this.code = code;
-        this.message = message;
-        this.timestamp = timestamp;
-        this.traceId = traceId;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public LocalDateTime getTimestamp() {
-        return timestamp;
-    }
-
-    public String getTraceId() {
-        return traceId;
+    public static ErrorResponse of(ErrorCode errorCode, String message, List<FieldErrorDetail> details, String requestId) {
+        return new ErrorResponse(
+                errorCode.getHttpStatus().value(),
+                errorCode.getHttpStatus().name(),
+                errorCode.getCode(),
+                errorCode.getReason(),
+                message == null ? errorCode.getMessage() : message,
+                details,
+                requestId
+        );
     }
 }

@@ -1,7 +1,7 @@
 package com.erumpay.merchantservice.controller;
 
 import com.erumpay.merchantservice.dto.*;
-import com.erumpay.merchantservice.entity.MerchantStatusHistory;
+import com.erumpay.merchantservice.global.exception.IdempotencyKeyRequiredException;
 import com.erumpay.merchantservice.service.MerchantService;
 
 import jakarta.validation.Valid;
@@ -19,9 +19,13 @@ public class InternalMerchantController {
 
     @PostMapping
     public InternalMerchantCreateResponse createInternalMerchant(
-            @RequestHeader("Idempotency-Key") String idempotencyKey,
-            @RequestBody InternalMerchantCreateRequest request
+            @RequestHeader(value = "Idempotency-Key", required = false) String idempotencyKey,
+            @Valid @RequestBody InternalMerchantCreateRequest request
     ) {
+        if (idempotencyKey == null || idempotencyKey.isBlank()) {
+            throw new IdempotencyKeyRequiredException("멱등키가 필요합니다.");
+        }
+
         MerchantResponse response = merchantService.createMerchant(request.toMerchantCreateRequest());
         return InternalMerchantCreateResponse.from(response);
     }

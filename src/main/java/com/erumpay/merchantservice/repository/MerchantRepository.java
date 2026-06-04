@@ -13,6 +13,8 @@ public interface MerchantRepository extends JpaRepository<Merchant, Long> {
 
     boolean existsByBusinessNumber(String businessNumber);
 
+    Optional<Merchant> findByMerchantId(Long merchantId);
+
     Optional<Merchant> findByMerchantIdAndDeletedAtIsNull(Long merchantId);
 
     Page<Merchant> findByDeletedAtIsNull(Pageable pageable);
