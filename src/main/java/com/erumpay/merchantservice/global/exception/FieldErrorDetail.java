@@ -1,0 +1,7 @@
+package com.erumpay.merchantservice.global.exception;
+
+public record FieldErrorDetail(
+        String field,
+        String message
+) {
+}
