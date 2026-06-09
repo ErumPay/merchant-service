@@ -98,9 +98,67 @@ public class Settlement {
             Merchant merchant,
             Long paymentId,
             Long amount,
-            LocalDateTime settledAt
+            LocalDateTime settledAt,
+            Long totalSales,
+            Long cancelAmount,
+            Long paymentCount,
+            Long cancelCount
+    ) {
+        return create(
+                eventId,
+                merchant,
+                paymentId,
+                amount,
+                settledAt,
+                totalSales,
+                cancelAmount,
+                paymentCount,
+                cancelCount,
+                SettlementStatus.COMPLETED
+        );
+    }
+
+    public static Settlement canceled(
+            String eventId,
+            Merchant merchant,
+            Long paymentId,
+            Long amount,
+            LocalDateTime settledAt,
+            Long totalSales,
+            Long cancelAmount,
+            Long paymentCount,
+            Long cancelCount
+    ) {
+        return create(
+                eventId,
+                merchant,
+                paymentId,
+                amount,
+                settledAt,
+                totalSales,
+                cancelAmount,
+                paymentCount,
+                cancelCount,
+                SettlementStatus.CANCELED
+        );
+    }
+
+    private static Settlement create(
+            String eventId,
+            Merchant merchant,
+            Long paymentId,
+            Long amount,
+            LocalDateTime settledAt,
+            Long totalSales,
+            Long cancelAmount,
+            Long paymentCount,
+            Long cancelCount,
+            SettlementStatus status
     ) {
         Settlement settlement = new Settlement();
+        Long netSales = totalSales - cancelAmount;
+        Long feeAmount = calculateFeeAmount(netSales, merchant.getFeeRate());
+
         settlement.eventId = eventId;
         settlement.merchant = merchant;
         settlement.paymentId = paymentId;
@@ -108,15 +166,15 @@ public class Settlement {
         settlement.periodType = SettlementPeriodType.DAILY;
         settlement.periodStart = settledAt.toLocalDate();
         settlement.periodEnd = settledAt.toLocalDate();
-        settlement.totalSales = amount;
-        settlement.cancelAmount = 0L;
-        settlement.netSales = amount;
+        settlement.totalSales = totalSales;
+        settlement.cancelAmount = cancelAmount;
+        settlement.netSales = netSales;
         settlement.feeRate = merchant.getFeeRate();
-        settlement.feeAmount = calculateFeeAmount(amount, merchant.getFeeRate());
-        settlement.settlementAmount = amount - settlement.feeAmount;
-        settlement.paymentCount = 1L;
-        settlement.cancelCount = 0L;
-        settlement.status = SettlementStatus.COMPLETED;
+        settlement.feeAmount = feeAmount;
+        settlement.settlementAmount = netSales - feeAmount;
+        settlement.paymentCount = paymentCount;
+        settlement.cancelCount = cancelCount;
+        settlement.status = status;
         settlement.settledAt = settledAt;
         settlement.createdAt = LocalDateTime.now();
         settlement.updatedAt = settlement.createdAt;

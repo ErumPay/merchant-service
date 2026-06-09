@@ -15,8 +15,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class PaymentSettlementEventConsumer {
 
-    private static final String PAYMENT_SETTLEMENT_COMPLETED = "PAYMENT_SETTLEMENT_COMPLETED";
-
     private final ObjectMapper objectMapper;
     private final PaymentSettlementService paymentSettlementService;
 
@@ -27,12 +25,7 @@ public class PaymentSettlementEventConsumer {
                     record.value(),
                     PaymentSettlementCompletedEvent.class
             );
-            if (!PAYMENT_SETTLEMENT_COMPLETED.equals(event.eventType())) {
-                log.info("Skip unsupported payment settlement event. eventId={}, eventType={}, paymentId={}",
-                        event.eventId(), event.eventType(), event.paymentId());
-                return;
-            }
-            paymentSettlementService.completeSettlement(event);
+            paymentSettlementService.handleSettlement(event);
         } catch (JsonProcessingException exception) {
             log.warn("Invalid payment settlement Kafka payload. topic={}, partition={}, offset={}, key={}",
                     record.topic(), record.partition(), record.offset(), record.key(), exception);
