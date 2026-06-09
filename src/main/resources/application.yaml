@@ -16,6 +16,22 @@ spring:
       ddl-auto: update
     show-sql: true
 
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    consumer:
+      group-id: ${KAFKA_CONSUMER_GROUP_ID:merchant-service}
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    listener:
+      ack-mode: record
+
+merchant:
+  kafka:
+    topics:
+      payment-settlement: ${PAYMENT_SETTLEMENT_EVENT_TOPIC:payment.settlement.event}
+
 management:
   endpoint:
     health:
