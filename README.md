@@ -77,6 +77,8 @@ DB_URL=jdbc:mysql://merchant-db:3306/pg_merchant_db
 DB_USERNAME=your_db_username
 DB_PASSWORD=your_db_password
 MYSQL_ROOT_PASSWORD=your_root_password
+JWT_SECRET=pg-auth-service와 동일한 JWT 서명 키
+INTERNAL_API_KEY=pg-auth-service와 동일한 내부 API 키
 ```
 
 실제 환경값은 `.env`에 작성합니다.
@@ -103,6 +105,7 @@ MYSQL_ROOT_PASSWORD=your_root_password
 | Method | Path | Description |
 | --- | --- | --- |
 | GET | `/internal/v1/merchants/{merchantId}` | 내부 가맹점 조회 |
+| PATCH | `/internal/v1/merchants/{merchantId}/status` | 내부 가맹점 상태 변경 |
 | GET | `/internal/v1/merchants/{merchantId}/validate` | 가맹점 유효성 검증 |
 | POST | `/internal/v1/merchants/api-key/validate` | API Key 검증 |
 | GET | `/internal/v1/merchants/{merchantId}/settlement-policy` | 정산 정책 조회 |
@@ -116,5 +119,7 @@ MYSQL_ROOT_PASSWORD=your_root_password
 
 - `.env`는 Git에 커밋하지 않습니다.
 - 실제 DB 계정, 비밀번호, 운영 주소는 README에 작성하지 않습니다.
-- 내부 API 인증/인가는 pg-auth 연동 이후 적용 예정입니다.
+- 내부 API는 `X-Internal-Api-Key` 헤더로 인증합니다.
+- 가맹점 Access Token에는 `merchantId`가 포함되어야 하며, 가맹점 역할은 자기 가맹점의 단건 조회/수정만 가능합니다.
+- PG 관리자 역할은 기존 관리자 API에 접근할 수 있습니다.
 - Kafka 등 서비스 간 통신은 후속 작업에서 진행 예정입니다.

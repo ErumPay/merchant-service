@@ -2,6 +2,7 @@ package com.erumpay.merchantservice.controller;
 
 import com.erumpay.merchantservice.dto.*;
 import com.erumpay.merchantservice.service.MerchantService;
+import com.erumpay.merchantservice.security.MerchantAccessGuard;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 
 import java.util.List;
+import org.springframework.security.core.Authentication;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,6 +22,7 @@ import java.util.List;
 public class MerchantController {
 
     private final MerchantService merchantService;
+    private final MerchantAccessGuard merchantAccessGuard;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -28,7 +31,8 @@ public class MerchantController {
     }
 
     @GetMapping("/{merchantId}")
-    public MerchantResponse getMerchant(@PathVariable Long merchantId) {
+    public MerchantResponse getMerchant(@PathVariable Long merchantId, Authentication authentication) {
+        merchantAccessGuard.check(authentication, merchantId);
         return merchantService.getMerchant(merchantId);
     }
 
@@ -46,8 +50,10 @@ public class MerchantController {
     @PutMapping("/{merchantId}")
     public MerchantResponse updateMerchant(
             @PathVariable Long merchantId,
-            @Valid @RequestBody MerchantUpdateRequest request
+            @Valid @RequestBody MerchantUpdateRequest request,
+            Authentication authentication
             ) {
+        merchantAccessGuard.check(authentication, merchantId);
         return merchantService.updateMerchant(merchantId, request);
     }
 

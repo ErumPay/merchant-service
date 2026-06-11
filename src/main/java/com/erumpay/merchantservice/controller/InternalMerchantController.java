@@ -35,6 +35,15 @@ public class InternalMerchantController {
         return merchantService.getInternalMerchant(merchantId);
     }
 
+    @PatchMapping("/{merchantId}/status")
+    public InternalMerchantStatusResponse updateInternalMerchantStatus(
+            @PathVariable Long merchantId,
+            @Valid @RequestBody MerchantStatusUpdateRequest request
+    ) {
+        MerchantResponse response = merchantService.updateMerchantStatus(merchantId, request);
+        return new InternalMerchantStatusResponse(response.merchantId(), response.status());
+    }
+
     @GetMapping("/{merchantId}/validate")
     public MerchantValidationResponse validateMerchant(@PathVariable Long merchantId) {
         return merchantService.validateMerchant(merchantId);

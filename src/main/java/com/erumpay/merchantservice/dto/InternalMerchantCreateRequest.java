@@ -39,6 +39,11 @@ public record InternalMerchantCreateRequest(
         String contactPhone,
 
         @NotBlank
+        @Size(max = 255)
+        @JsonProperty("business_address")
+        String businessAddress,
+
+        @NotBlank
         @Size(max = 100)
         @JsonProperty("settlement_account")
         String settlementAccount,
@@ -58,7 +63,7 @@ public record InternalMerchantCreateRequest(
                 businessNumber,
                 representativeName,
                 contactPhone,
-                valueOrDefault(contactEmail, "N/A"),
+                businessAddress,
                 valueOrDefault(serviceName, "N/A"),
                 mccCode,
                 BigDecimal.ZERO,
