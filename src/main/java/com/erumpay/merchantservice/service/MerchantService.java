@@ -61,7 +61,7 @@ public class MerchantService {
                 .apiKey(apiKey)
                 .apiKeyStatus(ApiKeyStatus.ACTIVE)
                 .apiKeyIssuedAt(LocalDateTime.now())
-                .status(MerchantStatus.DRAFT)
+                .status(MerchantStatus.PENDING)
                 .build();
 
         try {
