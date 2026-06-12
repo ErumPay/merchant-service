@@ -5,23 +5,48 @@ import com.erumpay.merchantservice.enums.ApiKeyStatus;
 import com.erumpay.merchantservice.enums.MerchantStatus;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 public record InternalMerchantResponse(
         Long merchantId,
         String merchantName,
         String businessNumber,
+        String ownerName,
+        String contactPhone,
+        String businessAddress,
+        String categoryName,
+        String mccCode,
         ApiKeyStatus apiKeyStatus,
+        LocalDateTime apiKeyIssuedAt,
+        LocalDateTime apiKeyRotatedAt,
         BigDecimal feeRate,
-        MerchantStatus status) {
+        String settlementAccount,
+        MerchantStatus status,
+        String suspendReason,
+        LocalDateTime updatedAt,
+        LocalDateTime deletedAt,
+        LocalDateTime createdAt) {
 
     public static InternalMerchantResponse from(Merchant merchant) {
         return new InternalMerchantResponse(
                 merchant.getMerchantId(),
                 merchant.getMerchantName(),
                 merchant.getBusinessNumber(),
+                merchant.getOwnerName(),
+                merchant.getContactPhone(),
+                merchant.getBusinessAddress(),
+                merchant.getCategoryName(),
+                merchant.getMccCode(),
                 merchant.getApiKeyStatus(),
+                merchant.getApiKeyIssuedAt(),
+                merchant.getApiKeyRotatedAt(),
                 merchant.getFeeRate(),
-                merchant.getStatus()
+                merchant.getSettlementAccount(),
+                merchant.getStatus(),
+                merchant.getSuspendReason(),
+                merchant.getUpdatedAt(),
+                merchant.getDeletedAt(),
+                merchant.getCreatedAt()
         );
     }
 }
