@@ -15,12 +15,13 @@ class MerchantAuthenticationFilterTest {
         assertThat(filter.shouldSkip("/api/v1/qr/generate")).isTrue();
         assertThat(filter.shouldSkip("/api/v1/payments")).isTrue();
         assertThat(filter.shouldSkip("/actuator/health")).isTrue();
+        assertThat(filter.shouldSkip("/internal/v1/merchants/api-key/validate")).isTrue();
     }
 
     @Test
-    void appliesAuthenticationToPgAdminAndInternalApis() {
+    void appliesAuthenticationOnlyToPgAdminApis() {
         assertThat(filter.shouldSkip("/api/v1/pg-admin/merchants/1")).isFalse();
-        assertThat(filter.shouldSkip("/internal/v1/merchants/1/status")).isFalse();
+        assertThat(filter.shouldSkip("/internal/v1/merchants/1/status")).isTrue();
     }
 
     private static class TestableMerchantAuthenticationFilter
