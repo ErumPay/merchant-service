@@ -16,6 +16,28 @@ spring:
       ddl-auto: update
     show-sql: true
 
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    consumer:
+      group-id: ${KAFKA_CONSUMER_GROUP_ID:merchant-service}
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    listener:
+      ack-mode: record
+
+merchant:
+  kafka:
+    topics:
+      payment-settlement: ${PAYMENT_SETTLEMENT_EVENT_TOPIC:payment.settlement.event}
+
+jwt:
+  secret: ${JWT_SECRET}
+
+internal:
+  api-key: ${INTERNAL_API_KEY}
+
 management:
   endpoint:
     health:
@@ -25,9 +47,9 @@ management:
     web:
       exposure:
         include: health
-  tracing:
-    sampling:
-      probability: ${TRACING_SAMPLING_PROBABILITY:1.0}
-  zipkin:
-    tracing:
-      endpoint: ${ZIPKIN_ENDPOINT:http://erumpay-zipkin.platform-operations.svc.cluster.local:9411/api/v2/spans}
+  # tracing:
+  #   sampling:
+  #     probability: ${TRACING_SAMPLING_PROBABILITY:1.0}
+  # zipkin:
+  #   tracing:
+  #     endpoint: ${ZIPKIN_ENDPOINT:http://erumpay-zipkin.platform-operations.svc.cluster.local:9411/api/v2/spans}
