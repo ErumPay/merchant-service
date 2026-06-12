@@ -24,6 +24,13 @@ public class MerchantAuthenticationFilter extends OncePerRequestFilter {
     private String internalApiKey;
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        return !path.startsWith("/api/v1/pg-admin/")
+                && !path.startsWith("/internal/");
+    }
+
+    @Override
     protected void doFilterInternal(
             HttpServletRequest request,
             HttpServletResponse response,
