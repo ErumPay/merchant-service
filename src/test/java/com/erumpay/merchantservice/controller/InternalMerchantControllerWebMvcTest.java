@@ -20,8 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @WebMvcTest(
         controllers = InternalMerchantController.class,
         properties = {
-                "jwt.secret=test-secret-test-secret-test-secret-1234",
-                "internal.api-key=test-internal-key"
+                "jwt.secret=test-secret-test-secret-test-secret-1234"
         }
 )
 @AutoConfigureMockMvc(addFilters = false)

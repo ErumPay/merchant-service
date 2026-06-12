@@ -33,11 +33,10 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
-                        .requestMatchers("/internal/**").hasRole("INTERNAL_SERVICE")
                         .requestMatchers(HttpMethod.GET, "/api/v1/pg-admin/merchants/*").hasAnyRole("MERCHANT", "PG_ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/v1/pg-admin/merchants/*").hasAnyRole("MERCHANT", "PG_ADMIN")
                         .requestMatchers("/api/v1/pg-admin/**").hasRole("PG_ADMIN")
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .addFilterBefore(merchantAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

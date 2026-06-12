@@ -10,8 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
     "spring.datasource.driver-class-name=org.h2.Driver",
     "spring.jpa.hibernate.ddl-auto=create-drop",
     "spring.jpa.database-platform=org.hibernate.dialect.H2Dialect",
-    "jwt.secret=test-secret-test-secret-test-secret-1234",
-    "internal.api-key=test-internal-key"
+    "jwt.secret=test-secret-test-secret-test-secret-1234"
 })
 class MerchantServiceApplicationTests {
 

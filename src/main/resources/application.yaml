@@ -35,9 +35,6 @@ merchant:
 jwt:
   secret: ${JWT_SECRET}
 
-internal:
-  api-key: ${INTERNAL_API_KEY}
-
 management:
   endpoint:
     health:
