@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,8 +19,10 @@ public class MerchantAuthenticationFilter extends OncePerRequestFilter {
 
     private final MerchantJwtService jwtService;
 
-    @Value("${internal.api-key}")
-    private String internalApiKey;
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        return !request.getRequestURI().startsWith("/api/v1/pg-admin/");
+    }
 
     @Override
     protected void doFilterInternal(
@@ -29,20 +30,13 @@ public class MerchantAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
-        if (request.getRequestURI().startsWith("/internal/")) {
-            String providedKey = request.getHeader("X-Internal-Api-Key");
-            if (internalApiKey.equals(providedKey)) {
-                setAuthentication("internal", "INTERNAL_SERVICE");
-            }
-        } else {
-            String authorization = request.getHeader("Authorization");
-            if (authorization != null && authorization.startsWith("Bearer ")) {
-                try {
-                    MerchantPrincipal principal = jwtService.parseAccessToken(authorization.substring(7));
-                    setAuthentication(principal, principal.role());
-                } catch (RuntimeException ignored) {
-                    SecurityContextHolder.clearContext();
-                }
+        String authorization = request.getHeader("Authorization");
+        if (authorization != null && authorization.startsWith("Bearer ")) {
+            try {
+                MerchantPrincipal principal = jwtService.parseAccessToken(authorization.substring(7));
+                setAuthentication(principal, principal.role());
+            } catch (RuntimeException ignored) {
+                SecurityContextHolder.clearContext();
             }
         }
         filterChain.doFilter(request, response);
